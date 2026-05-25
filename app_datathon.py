@@ -3,8 +3,6 @@ import pandas as pd
 from databricks import sql
 import os
 
-load_dotenv()
-
 st.set_page_config(
     page_title="Passos Mágicos",
     layout="wide"
