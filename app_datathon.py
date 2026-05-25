@@ -17,9 +17,9 @@ st.title("Passos Mágicos")
 def get_databricks_connection():
     try:
         conn = sql.connect(
-            server_hostname=os.getenv("DATABRICKS_SERVER_HOSTNAME"),
-            http_path=os.getenv("DATABRICKS_HTTP_PATH"),
-            personal_access_token=os.getenv("DATABRICKS_TOKEN")
+            server_hostname=st.secrets["DATABRICKS_HOST"],
+            http_path=st.secrets["DATABRICKS_HTTP_PATH"],
+            personal_access_token=st.secrets["DATABRICKS_TOKEN"]
         )
         return conn
     except Exception as e:
