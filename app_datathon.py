@@ -2,7 +2,6 @@ import streamlit as st
 import pandas as pd
 from databricks import sql
 import os
-from dotenv import load_dotenv
 
 load_dotenv()
 
