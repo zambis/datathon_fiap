@@ -1,0 +1,6 @@
+streamlit
+joblib
+numpy
+scikit-learn
+databricks-sql-connector
+pandas
