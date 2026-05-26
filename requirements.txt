@@ -1,4 +1,4 @@
 streamlit==1.57.0
 pandas==2.3.3
-databricks-sql-connector==5.0.0
+databricks-sql-connector==4.2.6
 # python-dotenv==1.2.2
