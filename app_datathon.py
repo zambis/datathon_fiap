@@ -10,7 +10,6 @@ st.set_page_config(
 
 st.title("Passos Mágicos")
 
-@st.cache_resource
 def get_databricks_connection():
     try:
         conn = sql.connect(
@@ -19,24 +18,32 @@ def get_databricks_connection():
             personal_access_token=st.secrets["DATABRICKS_TOKEN"]
         )
         return conn
+    except KeyError as e:
+        st.error(f"❌ Credencial faltando: {str(e)}")
+        return None
     except Exception as e:
         st.error(f"❌ Erro ao conectar ao Databricks: {str(e)}")
         return None
 
 @st.cache_data(ttl=3600)
 def load_data():
+    conn = None
     try:
         conn = get_databricks_connection()
         if not conn:
             return None
 
-        return pd.read_sql("SELECT * FROM pos_fiap.datathon.modelo_passos_magicos", conn)
+        df = pd.read_sql("SELECT * FROM pos_fiap.datathon.modelo_passos_magicos", conn)
+        return df
     except Exception as e:
         st.error(f"❌ Erro ao carregar dados: {str(e)}")
         return None
     finally:
         if conn:
-            conn.close()
+            try:
+                conn.close()
+            except:
+                pass
 
 with st.spinner("⏳ Carregando dados..."):
     df = load_data()
