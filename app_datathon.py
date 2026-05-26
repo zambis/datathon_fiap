@@ -10,64 +10,33 @@ st.set_page_config(
 
 st.title("Passos Mágicos")
 
-# Debug logs
-import sys
-st.write("🔧 Debug Mode ON")
-st.write(f"Version Streamlit: {st.__version__}")
-
 def get_databricks_connection():
     try:
-        st.write("📍 Tentando conectar ao Databricks...")
-        print("DEBUG: Iniciando conexão Databricks")
-
         conn = sql.connect(
             server_hostname=st.secrets["DATABRICKS_HOST"],
             http_path=st.secrets["DATABRICKS_HTTP_PATH"],
             access_token=st.secrets["DATABRICKS_TOKEN"]
         )
-
-        print("DEBUG: Conexão estabelecida!")
-        st.write("✅ Conectado ao Databricks!")
         return conn
     except KeyError as e:
-        msg = f"❌ Credencial faltando: {str(e)}"
-        st.error(msg)
-        print(f"DEBUG KeyError: {e}")
+        st.error(f"❌ Credencial faltando: {str(e)}")
         return None
-    except BaseException as e:
-        import traceback
-        tb = traceback.format_exc()
-        msg = f"❌ Erro ao conectar: {type(e).__name__}: {str(e)}"
-        st.error(msg)
-        st.write(f"```\n{tb}\n```")
-        print(f"DEBUG Exception: {tb}")
+    except Exception as e:
+        st.error(f"❌ Erro ao conectar ao Databricks: {str(e)}")
         return None
 
+@st.cache_data(ttl=3600)
 def load_data():
     conn = None
     try:
-        print("DEBUG: Iniciando load_data")
-        st.write("📍 Carregando dados...")
-
         conn = get_databricks_connection()
         if not conn:
-            print("DEBUG: Conexão retornou None")
             return None
 
-        print("DEBUG: Executando query SQL...")
-        st.write("📍 Executando query SQL...")
-
         df = pd.read_sql("SELECT * FROM pos_fiap.datathon.modelo_passos_magicos", conn)
-
-        print(f"DEBUG: Query executada com sucesso! {len(df)} linhas")
-        st.write(f"✅ Dados carregados! ({len(df)} linhas)")
         return df
-    except BaseException as e:
-        import traceback
-        tb = traceback.format_exc()
-        print(f"DEBUG: Erro em load_data: {tb}")
-        st.error(f"❌ Erro ao carregar dados: {type(e).__name__}")
-        st.write(f"```\n{tb}\n```")
+    except Exception as e:
+        st.error(f"❌ Erro ao carregar dados: {str(e)}")
         return None
     finally:
         if conn:
@@ -76,16 +45,10 @@ def load_data():
             except:
                 pass
 
-print("DEBUG: Iniciando app")
-
 with st.spinner("⏳ Carregando dados..."):
-    print("DEBUG: Dentro do spinner")
     df = load_data()
 
-print(f"DEBUG: df recebido, tipo: {type(df)}")
-
 if df is None:
-    st.error("❌ Falhou ao carregar dados. Verifique os logs acima.")
     st.stop()
 
 st.markdown("---")
