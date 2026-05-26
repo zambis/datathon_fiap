@@ -30,14 +30,17 @@ def get_databricks_connection():
         st.write("✅ Conectado ao Databricks!")
         return conn
     except KeyError as e:
-        st.error(f"❌ Credencial faltando: {str(e)}")
+        msg = f"❌ Credencial faltando: {str(e)}"
+        st.error(msg)
         print(f"DEBUG KeyError: {e}")
         return None
-    except Exception as e:
-        st.error(f"❌ Erro ao conectar ao Databricks: {str(e)}")
-        print(f"DEBUG Exception: {e}")
+    except BaseException as e:
         import traceback
-        print(traceback.format_exc())
+        tb = traceback.format_exc()
+        msg = f"❌ Erro ao conectar: {type(e).__name__}: {str(e)}"
+        st.error(msg)
+        st.write(f"```\n{tb}\n```")
+        print(f"DEBUG Exception: {tb}")
         return None
 
 def load_data():
@@ -59,9 +62,12 @@ def load_data():
         print(f"DEBUG: Query executada com sucesso! {len(df)} linhas")
         st.write(f"✅ Dados carregados! ({len(df)} linhas)")
         return df
-    except Exception as e:
-        print(f"DEBUG: Erro em load_data: {e}")
-        st.error(f"❌ Erro ao carregar dados: {str(e)}")
+    except BaseException as e:
+        import traceback
+        tb = traceback.format_exc()
+        print(f"DEBUG: Erro em load_data: {tb}")
+        st.error(f"❌ Erro ao carregar dados: {type(e).__name__}")
+        st.write(f"```\n{tb}\n```")
         return None
     finally:
         if conn:
