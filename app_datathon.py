@@ -23,7 +23,9 @@ def get_databricks_connection():
         conn = sql.connect(
             server_hostname=st.secrets["DATABRICKS_HOST"],
             http_path=st.secrets["DATABRICKS_HTTP_PATH"],
-            personal_access_token=st.secrets["DATABRICKS_TOKEN"]
+            personal_access_token=st.secrets["DATABRICKS_TOKEN"],
+            auth_type="pat",
+            use_ssl=True
         )
 
         print("DEBUG: Conexão estabelecida!")
