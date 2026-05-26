@@ -12,17 +12,22 @@ st.title("Passos Mágicos")
 
 def get_databricks_connection():
     try:
+        st.write("🔄 Conectando ao Databricks...")
         conn = sql.connect(
             server_hostname=st.secrets["DATABRICKS_HOST"],
             http_path=st.secrets["DATABRICKS_HTTP_PATH"],
-            personal_access_token=st.secrets["DATABRICKS_TOKEN"]
+            personal_access_token=st.secrets["DATABRICKS_TOKEN"],
+            session_configuration={"sql_session_init_statements": "SET max_query_execution_time = 600"}
         )
+        st.write("✅ Conectado!")
         return conn
     except KeyError as e:
         st.error(f"❌ Credencial faltando: {str(e)}")
         return None
     except Exception as e:
         st.error(f"❌ Erro ao conectar ao Databricks: {str(e)}")
+        import traceback
+        st.write(traceback.format_exc())
         return None
 
 @st.cache_data(ttl=3600)
@@ -33,10 +38,14 @@ def load_data():
         if not conn:
             return None
 
+        st.write("📊 Executando query...")
         df = pd.read_sql("SELECT * FROM pos_fiap.datathon.modelo_passos_magicos", conn)
+        st.write(f"✅ Dados carregados! ({len(df)} linhas)")
         return df
     except Exception as e:
         st.error(f"❌ Erro ao carregar dados: {str(e)}")
+        import traceback
+        st.write(traceback.format_exc())
         return None
     finally:
         if conn:
