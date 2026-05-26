@@ -42,7 +42,6 @@ def get_databricks_connection():
         print(traceback.format_exc())
         return None
 
-@st.cache_data(ttl=3600)
 def load_data():
     conn = None
     try:
