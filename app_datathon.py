@@ -15,8 +15,9 @@ def get_databricks_connection():
         conn = sql.connect(
             server_hostname=st.secrets["DATABRICKS_HOST"],
             http_path=st.secrets["DATABRICKS_HTTP_PATH"],
-            personal_access_token=st.secrets["DATABRICKS_TOKEN"],
-            auth_type="pat"
+            auth_type="oauth",
+            client_id=st.secrets["DATABRICKS_CLIENT_ID"],
+            client_secret=st.secrets["DATABRICKS_CLIENT_SECRET"]
         )
         return conn
     except KeyError as e:
